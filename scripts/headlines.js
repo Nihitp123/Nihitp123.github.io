@@ -1,4 +1,4 @@
-const topHeadlinesDisplay = document.getElementById('top-headlines')
+const topHeadlinesDisplay = document.getElementById('top-headlines-display')
 const sports=[
     "basketball",
     "football",
@@ -15,30 +15,34 @@ const leagues=[
 
 
 async function generateHeadlines(){
-    let currentleague=0
     let headlines=[]
-    sports.forEach(function(sport){
-        fetch("https://site.api.espn.com/apis/site/v2/sports/"+sport+"/"+leagues[currentleague]+"/news")
-        .then(response => response.json())
-        .then(data => {    
-            data.articles.forEach(function(article){
-                headlines.push(article.description)
-            })
-        })
-        currentleague += 1
-
+    const fetchPromises = sports.map(async function(sport,index){
+        const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${leagues[index]}/news`)
+        const data = await response.json()
+        data.articles.forEach(function(element) {
+            headlines.push(element.description)
+        });
     })
-    
+    await Promise.all(fetchPromises)
     return headlines
 }
 
 function displayHeadlines(headlines){
-    topHeadlinesDisplay.innerHTML= headlines
-}
+    headlines.forEach(function(headline){
+        const headlineContanier =document.createElement("div")
+        const headlineElement =document.createElement("p")
+        headlineElement.textContent = headline 
+        headlineContanier.appendChild(headlineElement)
+        headlineElement.setAttribute("id", "headline")
+        const line = document.createElement("hr")
+        headlineContanier.appendChild(line)
+        topHeadlinesDisplay.appendChild(headlineContanier)
+    })
+}   
 
 
-    
-
-     
-
-displayHeadlines(await generateHeadlines())
+generateHeadlines().then(function(headlines)  { 
+    displayHeadlines(headlines)
+}).catch(function(error){
+    console.error("error fetching headlines:", error)
+})
