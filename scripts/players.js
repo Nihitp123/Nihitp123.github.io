@@ -14,9 +14,8 @@ const leagues2=[
 ]
 
 async function generateplayers(){
-    console.log("hi")
     let Players=[]
-    const fetchPromises = sports.map(async function(sport,index){
+    const fetchPromises = sports2.map(async function(sport,index){
         const response = await fetch(`https://sports.core.api.espn.com/v2/sports/${sport}/leagues/${leagues2[index]}/athletes?limit=10&active=true`)
         const data = await response.json()
         data.items.forEach(async function(element) {
@@ -30,17 +29,28 @@ async function generateplayers(){
     return Players
 }
 
-function displayPlayers([players]){
+function displayPlayers(players){
     console.log(players)
-    players.forEach(function(player){
-        const playerContanier =document.createElement("div")
+    for (let i=0; i< players.length; i++) {
+        let player=players[i]
+       const playerContanier =document.createElement("div")
         const playerElement =document.createElement("p")
-        playerElement.textContent = [player] 
+        playerElement.textContent = player
         playerContanier.appendChild(playerElement)
         playerElement.setAttribute("id", "player")
         const line = document.createElement("hr")
         playerContanier.appendChild(line)
-        topPlayerDisplay.appendChild(playerContanier)
+        playersDisplay.appendChild(playerContanier)
+    }
+    players.forEach(function(player){
+        const playerContanier =document.createElement("div")
+        const playerElement =document.createElement("p")
+        playerElement.textContent = player
+        playerContanier.appendChild(playerElement)
+        playerElement.setAttribute("id", "player")
+        const line = document.createElement("hr")
+        playerContanier.appendChild(line)
+        playersDisplay.appendChild(playerContanier)
     })
 }   
 
